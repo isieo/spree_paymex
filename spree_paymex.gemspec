@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = SpreePaymex::VERSION
   s.authors     = ["Calvin Tee"]
   s.email       = ["calvin@collectskin.com"]
-  s.homepage    = "collectskin.com"
+  s.homepage    = "http://collectskin.com"
   s.summary     = %q{Alliance Bank Paymex integration}
   s.description = %q{Alliance Bank Paymex integration}
 
