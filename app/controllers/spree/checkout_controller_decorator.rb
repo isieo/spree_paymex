@@ -1,3 +1,4 @@
+=begin
 CheckoutController.class_eval do
 
   before_filter :redirect_for_dotpay_pl, :only => :update
@@ -13,3 +14,4 @@ CheckoutController.class_eval do
   end
 
 end
+=end

@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
+    <fieldset id="payment" data-hook>
+      <legend><%= t(:payment_information) %></legend>
+      <div data-hook="checkout_payment_step">
+      <h6>Pay with</h6>
+      <div class="form-horizontal">
+        <% @order.available_payment_methods.each do |method| %>
+        <div>
+          <label>
+            <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.payment_method %>
+            <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
+          </label>
+        </div>
+        <% end %>
+      </div>
+      
+        <div class="" id="payment-methods" data-hook>
+          <% @order.available_payment_methods.each do |method| %>
+            <% if method.type == 'Spree::BillingIntegration::Paymex'%>
+              <%= render :partial => "spree/checkout/payment/paymex", :locals => { :payment_method => method } %>
+            <%else%>
+            <li id="payment_method_<%= method.id %>" class="payment-method <%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
+              <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}", :class=>"form-horizontal" } do |form| %>
+              <fieldset>
+                <%= render :partial => "spree/checkout/payment/#{method.method_type}", :locals => { :payment_method => method } %>
+                <div class="form-buttons" data-hook="buttons">
+                  <%= submit_tag t(:save_and_continue), :class => 'continue button primary' %>
+                  <script>disableSaveOnClick();</script>
+                </div>
+                  <%= submit_tag nil, :id => 'post-final', :style => 'display:none;' %>
+                <% end %>
+              </fieldset>
+            </li>
+            <%end%>
+          <% end %>
+        </ul>
+        <br style="clear:both;" />
+        <div data-hook="coupon_code_field" data-hook></div>
+      </div>
+    </fieldset>
+
+
+  </div>
+</div>

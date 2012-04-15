@@ -1,0 +1,51 @@
+<div class="row">
+  <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
+    <%= form_tag 'https://www.abmb.com.my/threed/threed/MPI', :method => "post" do %>
+      <div class="controls" data-hook="card_number">
+        <%= image_tag 'creditcards/creditcard.gif', :id => 'creditcard-image' %>
+      </div>
+      
+      <div class="controls" data-hook="card_number">
+        <%= label_tag nil, t(:card_number) %>
+        <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
+        <%= text_field_tag "PX_PAN", '', options_hash.merge(:id => 'card_number', :class => 'required input-large', :size => 19, :maxlength => 19) %>
+        &nbsp;
+        <span id="card_type" style="display:none;">
+          ( <span id="looks_like" ><%= t(:card_type_is) %> <span id="type"></span></span>
+            <span id="unrecognized"><%= t(:unrecognized_card_type) %></span>
+          )
+        </span>
+      </div>
+      <div class="controls" data-hook="card_expiration">
+        <%= label_tag nil, t(:expiration) %>
+        <%= select_month(Date.today, :field_name => 'month', :use_month_numbers => true, :html_options =>{:class => 'required input-small'}) %>
+        <%= select_year(Date.today, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15,:html_options =>{ :class => 'required input-small'}) %>
+      </div>
+
+      <%= hidden_field_tag 'PX_PAN', payment_method.merchant_id_with_checksum(@order.number) %>
+      <%= hidden_field_tag 'PX_VERSION', 1 %>
+      <%= hidden_field_tag 'PX_TRANSACTION_TYPE', "SALS" %>
+      <%= hidden_field_tag 'PX_PURCHASE_ID', @order.number %>
+      <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', @order.total.to_s %>
+      <%= hidden_field_tag 'PX_EXPIRY', 1, :id=>"expirymerged" %>
+      <%= submit_tag "Proceed payment", :class=>"btn btn-success" %>
+      </fieldset>
+    <% end %>
+
+  </div>
+</div>
+
+
+<script type='text/javascript'>
+   $(document).ready(function() {
+        $('#date_month, #date_year').change(function() {
+            month = $('#date_month').val();
+            if (month < 10){
+              month = "0" + month
+            }
+            year = $('#date_year').val();
+            $('#expirymerged').val(month + (year.substr(2,3)));
+            console.log($('#expirymerged'))
+        });
+   }); 
+</script>

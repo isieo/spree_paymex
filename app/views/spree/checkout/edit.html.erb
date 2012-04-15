@@ -1,0 +1,33 @@
+<% content_for :head do %>
+  <%= javascript_include_tag states_path %>
+<% end %>
+<div id="checkout" data-hook>  
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
+  
+  <h1><%= t(:checkout) %></h1>
+  <div class="row">
+    <div class="span9"><h6>Your Progress</h6><%= bootstrap_checkout_progress(@order) %></div>
+    <div class="span3">
+      <% if @order.state != 'confirm' %>
+        <div id="checkout-summary" data-hook="checkout_summary_box">
+          <%= render :partial => 'summary', :locals => { :order => @order } %>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+  <% if(@order.state == "payment") %>
+        <%= render :partial => 'spree/shared/order_details', :locals => {:order => @order} -%>
+        <%= render('spree/checkout/payment_switcher') %>
+  <% else %>
+    <div class="row">
+      <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
+        <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}", :class=>"form-horizontal" } do |form| %>
+          <%= render @order.state, :form => form %>
+          <%= submit_tag nil, :id => 'post-final', :style => 'display:none;' %>
+        <% end %>
+      </div>
+    </div>
+  <%end%>
+</div>
