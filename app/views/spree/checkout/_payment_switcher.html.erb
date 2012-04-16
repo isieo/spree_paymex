@@ -15,17 +15,19 @@
         <% end %>
       </div>
       
-        <div class="" id="payment-methods" data-hook>
+        <ul class="" id="payment-methods" data-hook>
           <% @order.available_payment_methods.each do |method| %>
             <% if method.type == 'Spree::BillingIntegration::Paymex'%>
-              <%= render :partial => "spree/checkout/payment/paymex", :locals => { :payment_method => method } %>
+              <li id="payment_method_<%= method.id %>" class="payment-method <%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
+                <%= render :partial => "spree/checkout/payment/paymex", :locals => { :payment_method => method } %>
+              </li>
             <%else%>
             <li id="payment_method_<%= method.id %>" class="payment-method <%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
               <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}", :class=>"form-horizontal" } do |form| %>
               <fieldset>
                 <%= render :partial => "spree/checkout/payment/#{method.method_type}", :locals => { :payment_method => method } %>
-                <div class="form-buttons" data-hook="buttons">
-                  <%= submit_tag t(:save_and_continue), :class => 'continue button primary' %>
+                <div class="form-buttons form-actions" data-hook="buttons">
+                  <%= submit_tag t(:save_and_continue), :class => 'continue btn btn-primary' %>
                   <script>disableSaveOnClick();</script>
                 </div>
                   <%= submit_tag nil, :id => 'post-final', :style => 'display:none;' %>

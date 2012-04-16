@@ -1,6 +1,6 @@
 <div class="row">
   <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
-    <%= form_tag 'https://www.abmb.com.my/threed/threed/MPI', :method => "post" do %>
+    <%= form_tag 'https://www.abmb.com.my/threed/threed/MPI', :method => "post", :class=>"form-horizontal" do %>
       <div class="controls" data-hook="card_number">
         <%= image_tag 'creditcards/creditcard.gif', :id => 'creditcard-image' %>
       </div>
@@ -21,6 +21,14 @@
         <%= select_month(Date.today, :field_name => 'month', :use_month_numbers => true, :html_options =>{:class => 'required input-small'}) %>
         <%= select_year(Date.today, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15,:html_options =>{ :class => 'required input-small'}) %>
       </div>
+      
+      <div class="controls" data-hook="cart_code">
+        <%= label_tag nil, t(:card_code) %>
+        <%= text_field_tag "PX_CVV2", '', options_hash.merge(:id => 'card_code', :class => 'required input-small', :size => 5) %>
+        <span class="help-inline">
+          <%= link_to "(#{t(:whats_this)})", spree.content_path('cvv'), :target => '_blank', :onclick => "window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false", "data-hook" => "cvv_link" %>
+        </span>
+      </div>
 
       <%= hidden_field_tag 'PX_PAN', payment_method.merchant_id_with_checksum(@order.number) %>
       <%= hidden_field_tag 'PX_VERSION', 1 %>
@@ -28,8 +36,9 @@
       <%= hidden_field_tag 'PX_PURCHASE_ID', @order.number %>
       <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', @order.total.to_s %>
       <%= hidden_field_tag 'PX_EXPIRY', 1, :id=>"expirymerged" %>
-      <%= submit_tag "Proceed payment", :class=>"btn btn-success" %>
-      </fieldset>
+      <div class="form-buttons form-actions" data-hook="buttons">
+      <%= submit_tag "Complete My Order", :class=>"btn btn-primary" %>
+      </div>
     <% end %>
 
   </div>
