@@ -30,11 +30,11 @@
         </span>
       </div>
 
-      <%= hidden_field_tag 'PX_PAN', payment_method.merchant_id_with_checksum(@order.number) %>
+      <%= hidden_field_tag 'PX_MERCHANT_ID', payment_method.merchant_id_with_checksum(@order.number) %>
       <%= hidden_field_tag 'PX_VERSION', 1 %>
       <%= hidden_field_tag 'PX_TRANSACTION_TYPE', "SALS" %>
       <%= hidden_field_tag 'PX_PURCHASE_ID', @order.number %>
-      <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', @order.total.to_s %>
+      <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', (@order.total * 100).to_s%>
       <%= hidden_field_tag 'PX_EXPIRY', 1, :id=>"expirymerged" %>
       <div class="form-buttons form-actions" data-hook="buttons">
       <%= submit_tag "Complete My Order", :class=>"btn btn-primary" %>
