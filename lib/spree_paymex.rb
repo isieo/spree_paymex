@@ -1,8 +1,9 @@
+require 'spree_core'
 require "spree_paymex/version"
 
 module SpreePaymex
   class Engine < Rails::Engine
-
+  engine_name 'spree_paymex'
     config.autoload_paths += %W(#{config.root}/lib)
 
     def self.activate

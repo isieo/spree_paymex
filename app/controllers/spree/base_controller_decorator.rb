@@ -6,7 +6,7 @@ Spree::BaseController.class_eval do
       if (order.payment_state == "paid") or (order.payment_state == "credit_owed")
         session[:order_id] = nil
         order.line_items.destroy_all
-        flash[:notice] = t(:pp_ws_payment_received)
+        flash[:notice] = "Payment received"
       end
     end
   end

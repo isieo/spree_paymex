@@ -3,7 +3,7 @@
 <% end %>
 <div id="checkout" data-hook>  
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
-  
+ 
   <h1><%= t(:checkout) %></h1>
   <div class="row">
     <div class="span9"><h6>Your Progress</h6><%= bootstrap_checkout_progress(@order) %></div>

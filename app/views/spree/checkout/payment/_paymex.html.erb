@@ -17,9 +17,14 @@
         </span>
       </div>
       <div class="controls" data-hook="card_expiration">
+        <%= hidden_field_tag 'PX_EXPIRY', 1, :id=>"expirymerged" %>
         <%= label_tag nil, t(:expiration) %>
-        <%= select_month(Date.today, :field_name => 'month', :use_month_numbers => true, :html_options =>{:class => 'required input-small'}) %>
-        <%= select_year(Date.today, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15,:html_options =>{ :class => 'required input-small'}) %>
+        <noscript>
+          <%= text_field_tag "PX_PAN", '', options_hash.merge(:placeholder=> 'mmyy',:id => 'expiry-merged', :class => 'required input-small', :size => 5, :maxlength => 4, :minlength => 4, :type=>'number') %>
+          <span>Format is MMYY, Example: April 2020 is 0420</span>
+        </noscript>
+        <%= select_month(Date.today, :field_name => 'month', :use_month_numbers => true, :html_options =>{:class => 'required input-small', :style=>"display:none"}) %>
+        <%= select_year(Date.today, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15,:html_options =>{ :class => 'required input-small', :style=>"display:none"}) %>
       </div>
       
       <div class="controls" data-hook="cart_code">
@@ -31,11 +36,12 @@
       </div>
 
       <%= hidden_field_tag 'PX_MERCHANT_ID', payment_method.merchant_id_with_checksum(@order.number) %>
-      <%= hidden_field_tag 'PX_VERSION', 1 %>
+      <%= hidden_field_tag 'PX_VERSION', '1.1' %>
       <%= hidden_field_tag 'PX_TRANSACTION_TYPE', "SALS" %>
+      <%= hidden_field_tag 'PX_PURCHASE_DESCRIPTION', "Payment for Order #{@order.number}" %>
       <%= hidden_field_tag 'PX_PURCHASE_ID', @order.number %>
-      <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', (@order.total * 100).to_s%>
-      <%= hidden_field_tag 'PX_EXPIRY', 1, :id=>"expirymerged" %>
+      <%= hidden_field_tag 'PX_PURCHASE_DATE', Time.now.strftime("%d%m%Y %H:%M:%S") %>
+      <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', (@order.total * 100).to_i%>
       <div class="form-buttons form-actions" data-hook="buttons">
       <%= submit_tag "Complete My Order", :class=>"btn btn-primary" %>
       </div>
@@ -47,6 +53,7 @@
 
 <script type='text/javascript'>
    $(document).ready(function() {
+        $('#date_month, #date_year').show();
         $('#date_month, #date_year').change(function() {
             month = $('#date_month').val();
             if (month < 10){
@@ -56,5 +63,6 @@
             $('#expirymerged').val(month + (year.substr(2,3)));
             console.log($('#expirymerged'))
         });
+        $('#date_month').trigger('change')
    }); 
 </script>
