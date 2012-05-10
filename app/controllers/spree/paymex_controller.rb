@@ -11,7 +11,7 @@ module Spree
       end
       @order = Spree::Order.find_by_number(params[:PX_PURCHASE_ID])
       
-      if Base64.decode64 params[:PX_ERROR_CODE].empty?
+      if params[:PX_ERROR_CODE]).empty?
         salt = Base64.decode64 params[:PX_SIG][0..11]
         data = Base64.decode64 params[:PX_SIG][12..-1]
         px_ref = Digest::MD5.hexdigest(@order.number)[0..7]
