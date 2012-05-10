@@ -1,5 +1,5 @@
 module Spree
-  class PaymexController < Spree::BaseController
+  class PaymexController < ::ActionController::Base
 
     def response_handler
       if params[:PX_PURCHASE_ID].nil?
@@ -51,7 +51,7 @@ module Spree
       error_message = "Error Processing payment, please contact customer support."
       error_message = params[:PX_ERROR_DESCRIPTION] if params[:PX_ERROR_DESCRIPTION]
       flash[:error] = error_message
-      redirect_to checkout_state_path(@order.state)
+      redirect_to checkout_state_path('payment')
     end
 
 
