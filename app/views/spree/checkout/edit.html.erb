@@ -2,21 +2,18 @@
   <%= javascript_include_tag states_path %>
 <% end %>
 <div id="checkout" data-hook>  
-  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
- 
-  <h1><%= t(:checkout) %></h1>
   <div class="row">
-    <div class="span9"><h6>Your Progress</h6><%= bootstrap_checkout_progress(@order) %></div>
-    <div class="span3">
-      <% if @order.state != 'confirm' %>
-        <div id="checkout-summary" data-hook="checkout_summary_box">
-          <%= render :partial => 'summary', :locals => { :order => @order } %>
-        </div>
-      <% end %>
-    </div>
+    <div class="checkout-progress"><%= becon_checkout_progress(@order) %></div>
+
+    <% if @order.state != 'confirm' %>
+      <div id="checkout-summary" data-hook="checkout_summary_box">
+        <%= render :partial => 'summary', :locals => { :order => @order } %>
+      </div>
+    <% end %>
+
 
   </div>
-
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
   <% if(@order.state == "payment") %>
         <%= render :partial => 'spree/shared/order_details', :locals => {:order => @order} -%>
         <%= render('spree/checkout/payment_switcher') %>

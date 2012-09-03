@@ -14,7 +14,7 @@ module Spree
       if params[:PX_ERROR_CODE].empty?
         salt = Base64.decode64 params[:PX_SIG][0..11]
         data = Base64.decode64 params[:PX_SIG][12..-1]
-        px_ref = Digest::MD5.hexdigest(@order.number)[0..7]
+        px_ref = @gateway.preferred_px_ref
         password = @gateway.preferred_merchant_id + px_ref
         decrypted = self.decrypt_pbe_with_md5_and_des(password, salt, data).split("\n")
         valid = true
