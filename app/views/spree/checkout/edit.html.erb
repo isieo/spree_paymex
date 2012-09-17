@@ -21,7 +21,11 @@
     <div class="row">
       <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
         <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}", :class=>"form-horizontal" } do |form| %>
-          <%= render @order.state, :form => form %>
+           <%
+            order_state = @order.state
+            order_state = "address_becon_theme"  if order_state == "address"
+           %>
+          <%= render order_state, :form => form %>
           <%= submit_tag nil, :id => 'post-final', :style => 'display:none;' %>
         <% end %>
       </div>
