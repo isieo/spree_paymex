@@ -1,7 +1,8 @@
 class Spree::BillingIntegration::Paymex < Spree::BillingIntegration
+  attr_accessible :preferred_merchant_id, :px_ref
 
   preference :merchant_id, :string
-  preference :ps_ref, :string
+  preference :px_ref, :string
 
   def payment_profiles_supported?
     false
