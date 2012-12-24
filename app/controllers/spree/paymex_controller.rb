@@ -7,10 +7,10 @@ module Spree
         flash[:error] = error_message
         @order = Spree::Order.find(session[:order_id])
         redirect_to checkout_state_path(@order.state)
-        return 
+        return
       end
       @order = Spree::Order.find_by_number(params[:PX_PURCHASE_ID])
-      
+
       if params[:PX_ERROR_CODE].empty?
         salt = Base64.decode64 params[:PX_SIG][0..11]
         data = Base64.decode64 params[:PX_SIG][12..-1]
@@ -31,14 +31,14 @@ module Spree
             break
           end
         end
-        
+
         if valid
           @order.payment.started_processing
           if @order.total.to_f == params[:PX_PURCHASE_AMOUNT].to_f
             @order.payment.response_code = params[:PX_APPROVAL_CODE]
             @order.payment.complete
-          end 
-          
+          end
+
           @order.finalize!
           @order.next
           @order.next
@@ -47,9 +47,9 @@ module Spree
           return
         end
       end
-      
-      error_message = "Error Processing payment, please contact customer support."
-      error_message = params[:PX_ERROR_DESCRIPTION] if params[:PX_ERROR_DESCRIPTION]
+
+      error_message = "Error Processing payment, We are unable to process your payment, please contact customer support."
+      error_message += "Payment gateway message: #{params[:PX_ERROR_DESCRIPTION]}" if params[:PX_ERROR_DESCRIPTION]
       flash[:error] = error_message
       redirect_to checkout_state_path('payment')
     end
