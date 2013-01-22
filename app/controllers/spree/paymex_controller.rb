@@ -14,8 +14,9 @@ module Spree
       if params[:PX_ERROR_CODE].empty? || params[:PX_ERROR_CODE] == '000'
         salt = Base64.decode64 params[:PX_SIG][0..11]
         data = Base64.decode64 params[:PX_SIG][12..-1]
+        @gateway = Spree::PaymentMethod.find(params[:PX_CUSTOM_FIELD1])
         px_ref = @gateway.preferred_px_ref
-        password = @gateway.preferred_merchant_id + px_ref
+        password = @gateway.preferred_merchant_id.rjust(13,'0') + px_ref
         decrypted = self.decrypt_pbe_with_md5_and_des(password, salt, data).split("\n")
         valid = true
         i = 0
@@ -30,19 +31,37 @@ module Spree
             valid = false
             break
           end
+          i+=1
+          break if i >= decrypted.count
         end
 
         if valid
-          @order.payment.started_processing
-          if @order.total.to_f == params[:PX_PURCHASE_AMOUNT].to_f
-            @order.payment.response_code = params[:PX_APPROVAL_CODE]
-            @order.payment.complete
+
+          credit_card = Spree::Creditcard.new(month: 1,year: 2030, :verification_value=>'000',number: params[:PX_PAN] )
+          credit_card.save
+          @order.payments.create(
+                :amount => params[:PX_PURCHASE_AMOUNT].to_f / 100,
+                :source => credit_card.id,
+                :source_type => 'Spree::Creditcard',
+                :payment_method_id => @gateway.id,
+                :response_code => params[:PX_RRN],
+                :avs_response => params[:PX_APPROVAL_CODE])
+
+          @order.payment.started_processing!
+          @order.payment.log_entries.create(:details => params.except(:PX_PAN).to_yaml)
+          if @order.total.to_f == params[:PX_PURCHASE_AMOUNT].to_f/100
+            @order.payment.complete!
+          end
+          @order.update_attributes({:state => "complete", :completed_at => Time.now}, :without_protection => true)
+
+          # Since we dont rely on state machine callback, we just explicitly call this method for spree_store_credits
+          if @order.respond_to?(:consume_users_credit, true)
+            @order.send(:consume_users_credit)
           end
 
           @order.finalize!
-          @order.next
-          @order.next
-          @order.save
+          flash[:notice] = I18n.t(:order_processed_successfully)
+          flash[:commerce_tracking] = "true"
           redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token}), :notice => I18n.t("payment_success")
           return
         end
@@ -64,7 +83,7 @@ module Spree
        des=OpenSSL::Cipher::Cipher.new("des")
        des.pkcs5_keyivgen password, salt, 1000, 'MD5'
        des.decrypt
-       d = des.update(enc_data)
+       d = des.update(data)
        d << des.final
      end
   end
