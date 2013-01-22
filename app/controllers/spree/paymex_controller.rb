@@ -74,7 +74,7 @@ module Spree
     end
 
 
-  private
+  protected
      def decrypt_pbe_with_md5_and_des(password, salt, data)
         require 'digest/md5'
         require 'openssl'
