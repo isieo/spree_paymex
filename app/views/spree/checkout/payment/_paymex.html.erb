@@ -1,6 +1,6 @@
 <div class="row">
   <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
-    <form action='https://www.abmb.com.my/threed/threed/MPI' method ="post" :class="form-horizontal">
+    <form action="<%=paymex_proxy_path%>" method ="post" :class="form-horizontal">
       <div class="controls" data-hook="card_number">
         <%= image_tag 'creditcards/creditcard.gif', :id => 'creditcard-image' %>
       </div>
