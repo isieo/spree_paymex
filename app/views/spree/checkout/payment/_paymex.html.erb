@@ -8,7 +8,7 @@
       <div class="controls" data-hook="card_number">
         <%= label_tag nil, t(:card_number) %>
         <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
-        <%= text_field_tag "PX_PAN", '', options_hash.merge(:id => 'card_number', :class => 'required input-large', :size => 19, :maxlength => 19) %>
+        <%= text_field_tag "paymex[PX_PAN]", '', options_hash.merge(:id => 'card_number', :class => 'required input-large', :size => 19, :maxlength => 19) %>
         &nbsp;
         <span id="card_type" style="display:none;">
           ( <span id="looks_like" ><%= t(:card_type_is) %> <span id="type"></span></span>
@@ -17,10 +17,10 @@
         </span>
       </div>
       <div class="controls" data-hook="card_expiration">
-        <%= hidden_field_tag 'PX_EXPIRY', 1, :id=>"expirymerged" %>
+        <%= hidden_field_tag 'paymex[PX_EXPIRY]', 1, :id=>"expirymerged" %>
         <%= label_tag nil, t(:expiration) %>
         <noscript>
-          <%= text_field_tag "PX_EXPIRY", '', options_hash.merge(:placeholder=> 'mmyy',:id => 'expiry-merged', :class => 'required input-small', :size => 5, :maxlength => 4, :minlength => 4, :type=>'number') %>
+          <%= text_field_tag "paymex[PX_EXPIRY]", '', options_hash.merge(:placeholder=> 'mmyy',:id => 'expiry-merged', :class => 'required input-small', :size => 5, :maxlength => 4, :minlength => 4, :type=>'number') %>
           <span>Format is MMYY, Example: April 2020 is 0420</span>
         </noscript>
         <%= select_month(Date.today, :field_name => 'month', :use_month_numbers => true, :html_options =>{:name=>'', :class => 'required input-small', :style=>"display:none"}) %>
@@ -29,20 +29,20 @@
 
       <div class="controls" data-hook="cart_code">
         <%= label_tag nil, t(:card_code) %>
-        <%= text_field_tag "PX_CVV2", '', options_hash.merge(:id => 'card_code', :class => 'required input-small', :size => 4) %>
+        <%= text_field_tag "paymex[PX_CVV2]", '', options_hash.merge(:id => 'card_code', :class => 'required input-small', :size => 4) %>
         <span class="help-inline">
           <%= link_to "(#{t(:whats_this)})", spree.content_path('cvv'), :target => '_blank', :onclick => "window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false", "data-hook" => "cvv_link" %>
         </span>
       </div>
 
-      <%= hidden_field_tag 'PX_MERCHANT_ID', payment_method.merchant_id_with_checksum(@order.number) %>
-      <%= hidden_field_tag 'PX_VERSION', '1.1' %>
-      <%= hidden_field_tag 'PX_TRANSACTION_TYPE', "SALS" %>
-      <%= hidden_field_tag 'PX_CUSTOM_FIELD1', payment_method.id %>
-      <%= hidden_field_tag 'PX_PURCHASE_DESCRIPTION', "Payment for Order #{@order.number}" %>
-      <%= hidden_field_tag 'PX_PURCHASE_ID', @order.number %>
-      <%= hidden_field_tag 'PX_PURCHASE_DATE', Time.now.strftime("%d%m%Y %H:%M:%S") %>
-      <%= hidden_field_tag 'PX_PURCHASE_AMOUNT', (@order.total * 100).to_i%>
+      <%= hidden_field_tag 'paymex[PX_MERCHANT_ID]', payment_method.merchant_id_with_checksum(@order.number) %>
+      <%= hidden_field_tag 'paymex[PX_VERSION]', '1.1' %>
+      <%= hidden_field_tag 'paymex[PX_TRANSACTION_TYPE]', "SALS" %>
+      <%= hidden_field_tag 'paymex[PX_CUSTOM_FIELD1]', payment_method.id %>
+      <%= hidden_field_tag 'paymex[PX_PURCHASE_DESCRIPTION]', "Payment for Order #{@order.number}" %>
+      <%= hidden_field_tag 'paymex[PX_PURCHASE_ID]', @order.number %>
+      <%= hidden_field_tag 'paymex[PX_PURCHASE_DATE]', Time.now.strftime("%d%m%Y %H:%M:%S") %>
+      <%= hidden_field_tag 'paymex[PX_PURCHASE_AMOUNT]', (@order.total * 100).to_i%>
       <div class="form-buttons form-actions" data-hook="buttons">
       <%= submit_tag "Complete My Order", :class=>"btn btn-primary" %>
       </div>

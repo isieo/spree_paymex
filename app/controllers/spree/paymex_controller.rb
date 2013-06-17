@@ -62,7 +62,7 @@ module Spree
           @order.finalize!
           flash[:notice] = I18n.t(:order_processed_successfully)
           flash[:commerce_tracking] = "true"
-          redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token}), :notice => I18n.t("payment_success")
+          redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token}), :notice => "Your Payment is successful, you will hear from our customer support very soon."
           return
         end
       end
@@ -73,6 +73,29 @@ module Spree
       redirect_to checkout_state_path('payment')
     end
 
+    def proxy
+      @order = Spree::Order.find_by_number(params[:paymex][:PX_PURCHASE_ID])
+      @gateway = Spree::PaymentMethod.find(params[:paymex][:PX_CUSTOM_FIELD1])
+      salt = ('a'..'z').to_a.shuffle[0..7].join
+      password = @gateway.preferred_px_ref
+
+      data_string = ""
+      [:PX_VERSION,:PX_TRANSACTION_TYPE,
+        :PX_PURCHASE_ID,:PX_PAN,
+        :PX_EXPIRY,:PX_MERCHANT_ID,
+        :PX_PURCHASE_AMOUNT,:PX_PURCHASE_DESCRIPTION,
+        :PX_PURCHASE_DATE,:PX_CVV2,
+        :PX_CUSTOM_FIELD1,:PX_CUSTOM_FIELD2,
+        :PX_CUSTOM_FIELD3,:PX_CUSTOM_FIELD4,
+        :PX_CUSTOM_FIELD5,:PX_REF,
+        :PX_ALT_URL,:PX_POLICY_NO].each do |k|
+          data_string += params[:paymex][k] if params[:paymex][k] && !params[:paymex][k].blank?
+          data_string += "\n"
+      end
+      px_sig = Base64.ecode64(salt) + Base64.ecode64(ecrypt_pbe_with_md5_and_des(password, salt, data_string))
+      @paymex_params = params[:paymex]
+      @paymex_params[:PX_SIG] = px_sig
+    end
 
   protected
      def decrypt_pbe_with_md5_and_des(password, salt, data)
@@ -86,5 +109,18 @@ module Spree
        d = des.update(data)
        d << des.final
      end
+
+     def ecrypt_pbe_with_md5_and_des(password, salt, data)
+        require 'digest/md5'
+        require 'openssl'
+        require "base64"
+        # pbe with md5 and des
+       des=OpenSSL::Cipher::Cipher.new("des")
+       des.pkcs5_keyivgen password, salt, 1000, 'MD5'
+       des.encrypt
+       d = des.update(data)
+       d << des.final
+     end
+
   end
 end
