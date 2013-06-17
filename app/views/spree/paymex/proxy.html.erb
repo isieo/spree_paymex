@@ -1,0 +1,19 @@
+<%= form_tag "https://www.abmb.com.my/threed/threed/MPI" do %>
+	<div>
+	  <% @paymex_params.each do |p| %>
+	    <%= hidden_field_tag p[0],p[1] %>
+	  <% end %>
+  </div>
+	<div class="buttons">
+	  <button  name="submit" value="1" type="submit" id="btn_pp">
+	    Click on this button if you are not redirected in 10 seconds
+	  </button>
+	</div>
+<%end%>
+
+<script>
+$(function(){
+  $('#btn_pp').click();
+  $('#btn_pp').hide();
+});
+</script>
