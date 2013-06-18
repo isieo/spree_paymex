@@ -1,6 +1,6 @@
 module Spree
   class PaymexController < ::ActionController::Base
-
+    layout 'paymex_proxy'
     def response_handler
       if params[:PX_PURCHASE_ID].nil?
         error_message = "Invalid purchase, please contact customer support."
@@ -92,7 +92,7 @@ module Spree
           data_string += params[:paymex][k] if params[:paymex][k] && !params[:paymex][k].blank?
           data_string += "\n"
       end
-      px_sig = Base64.ecode64(salt) + Base64.ecode64(ecrypt_pbe_with_md5_and_des(password, salt, data_string))
+      px_sig = (Base64.encode64(salt) + Base64.encode64(ecrypt_pbe_with_md5_and_des(password, salt, data_string))).gsub("\n", "")
       @paymex_params = params[:paymex]
       @paymex_params[:PX_SIG] = px_sig
     end
