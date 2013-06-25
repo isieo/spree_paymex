@@ -77,7 +77,7 @@ module Spree
       @order = Spree::Order.find_by_number(params[:paymex][:PX_PURCHASE_ID])
       @gateway = Spree::PaymentMethod.find(params[:paymex][:PX_CUSTOM_FIELD1])
       salt = ('a'..'z').to_a.shuffle[0..7].join
-      password = @gateway.preferred_px_ref
+      password = @gateway.preferred_merchant_id.rjust(13,'0') + @gateway.preferred_px_ref
 
       data_string = ""
       [:PX_VERSION,:PX_TRANSACTION_TYPE,
