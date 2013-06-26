@@ -13,6 +13,8 @@ class Spree::BillingIntegration::Paymex < Spree::BillingIntegration
     order_id.split(//).each do |c|
       sum += c.ord
     end
+    sum = sum.to_i
+    sum -= 1000 if sum > 999
     "#{preferred_merchant_id.to_i + sum.to_i}".rjust(13,'0')
   end
 

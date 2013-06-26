@@ -1,4 +1,4 @@
-<%= form_tag "https://www.abmb.com.my/threed/threed/MPI" do %>
+<form action="https://www.abmb.com.my/threed/threed/MPI" method ="post">
 	<div>
 	  <% @paymex_params.each do |p| %>
 	    <%= hidden_field_tag p[0],p[1] %>
@@ -9,7 +9,7 @@
 	    Click on this button if you are not redirected in 10 seconds
 	  </button>
 	</div>
-<%end%>
+</form>
 
 <script>
 $(function(){

@@ -79,6 +79,8 @@ module Spree
       salt = ('a'..'z').to_a.shuffle[0..7].join
       password = @gateway.merchant_id_with_checksum(@order.number) + @gateway.preferred_px_ref
 
+      params[:paymex][:PX_REF] = @gateway.preferred_px_ref
+
       data_string = ""
       [:PX_VERSION,:PX_TRANSACTION_TYPE,
         :PX_PURCHASE_ID,:PX_PAN,
