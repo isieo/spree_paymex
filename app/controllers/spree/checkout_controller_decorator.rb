@@ -1,6 +1,6 @@
 CheckoutController.class_eval do
 
-  before_filter :redirect_for_dotpay_pl, :only => :update
+  before_filter :redirect_for_paymex, :only => :update
 
   private
 
