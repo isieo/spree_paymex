@@ -1,5 +1,5 @@
 class Spree::BillingIntegration::Paymex < Spree::BillingIntegration
-  attr_accessible :preferred_merchant_id, :preferred_px_ref
+  #attr_accessible :preferred_merchant_id, :preferred_px_ref
 
   preference :merchant_id, :string
   preference :px_ref, :string
