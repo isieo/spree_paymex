@@ -1,0 +1,51 @@
+Test for algo
+0nhMg0exS+w=
+q098oBHrDNraLFLr9xUlFBhBn5hbfkNh915rjuBeopUC7CabjSPerFvVBfVVCr/BHpyvXdgeCFKv5DgLUcD7vTzV0xeVtbkS+H1bG0D8SC2Pa4dRLEiNCjD79E6xnP4Do3bbEW0Uqz8=
+
+pbewithmd5anddes
+
+require 'openssl'
+require "base64"
+require 'digest/md5'
+salt = Base64.decode64 "0nhMg0exS+w="
+enc_data = Base64.decode64 "q098oBHrDNraLFLr9xUlFBhBn5hbfkNh915rjuBeopUC7CabjSPerFvVBfVVCr/BHpyvXdgeCFKv5DgLUcD7vTzV0xeVtbkS+H1bG0D8SC2Pa4dRLEiNCjD79E6xnP4Do3bbEW0Uqz8="
+password ="000001234512345ref"
+
+des=OpenSSL::Cipher::Cipher.new("des")
+des.pkcs5_keyivgen "000001234512345ref", salt, 1000
+des.decrypt
+d = des.update(enc_data)
+d << des.final
+
+
+des=OpenSSL::Cipher::Cipher.new("des")
+des.decrypt
+salted_password = password + salt
+
+result = ''
+target = ''
+keymaterial = ''
+[0].each do |i|
+  if i==0
+    puts "initialized"
+    result = salted_password
+  else
+    puts "concated"
+    target << result
+    target << salted_password
+  end
+
+  1000.times do
+    result = Digest::MD5.hexdigest(result)
+  end
+
+  keymaterial << result
+
+end
+
+
+
+des.key = keymaterial[0..7]
+des.iv = keymaterial[8..16]
+d = des.update(enc_data)
+d << des.final
