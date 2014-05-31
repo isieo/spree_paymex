@@ -1,6 +1,5 @@
 <div class="row">
-  <div class="<%= if @order.state != 'confirm' then 'span9' else 'span12' end %>">
-    <form action="<%=paymex_proxy_path%>" method ="post" :class="form-horizontal">
+  <div class="<%= if @order.state != 'confirm' then 'large-9' else 'large-12' end %> columns">
       <div class="controls" data-hook="card_number">
         <%= image_tag 'creditcards/creditcard.gif', :id => 'creditcard-image' %>
       </div>
@@ -43,11 +42,6 @@
       <%= hidden_field_tag 'paymex[PX_PURCHASE_ID]', @order.number %>
       <%= hidden_field_tag 'paymex[PX_PURCHASE_DATE]', Time.now.strftime("%d%m%Y %H:%M:%S") %>
       <%= hidden_field_tag 'paymex[PX_PURCHASE_AMOUNT]', (@order.total * 100).to_i%>
-      <div class="form-buttons form-actions" data-hook="buttons">
-      <%= submit_tag "Complete My Order", :class=>"btn btn-primary" %>
-      </div>
-    </form>
-
   </div>
 </div>
 

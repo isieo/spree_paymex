@@ -5,11 +5,12 @@ CheckoutController.class_eval do
   private
 
   def redirect_for_paymex
-    return unless params[:state] == "payment"
-    @payment_method = PaymentMethod.find(params[:order][:payments_attributes].first[:payment_method_id])
-    if @payment_method && @payment_method.kind_of?(Spree::BillingIntegration::Paymex)
-      redirect_to paymex_proxy_path(:gateway_id => @payment_method.id, :order_id => @order.id)
-    end
+      if  object_params[:payments_attributes] &&
+          object_params[:payments_attributes].first[:payment_method_id] &&
+          PaymentMethod.find(object_params[:payments_attributes].first[:payment_method_id]).type == 'Spree::BillingIntegration::Paymex'
+        redirect_to paymex_proxy_path(@order, params[:paymex])
+      end
   end
+
 
 end
