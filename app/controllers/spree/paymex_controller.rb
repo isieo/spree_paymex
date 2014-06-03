@@ -37,7 +37,7 @@ module Spree
 
         if valid
 
-          credit_card = Spree::CreditCard.new(name: ()@order.try(:bill_address).try(:name) || 'Unknown') ,month: 1,year: 2030, :verification_value=>'000',number: params[:PX_PAN] )
+          credit_card = Spree::CreditCard.new(name: (@order.try(:bill_address).try(:name) || 'Unknown') ,month: 1,year: 2030, :verification_value=>'000',number: params[:PX_PAN] )
           credit_card.save
           @order.payments.create(
                 :amount => params[:PX_PURCHASE_AMOUNT].to_f / 100,
