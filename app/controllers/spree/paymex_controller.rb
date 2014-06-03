@@ -41,8 +41,7 @@ module Spree
           credit_card.save
           @order.payments.create(
                 :amount => params[:PX_PURCHASE_AMOUNT].to_f / 100,
-                :source => credit_card.id,
-                :source_type => 'Spree::CreditCard',
+                :source => credit_card,
                 :payment_method_id => @gateway.id,
                 :response_code => params[:PX_RRN],
                 :avs_response => params[:PX_APPROVAL_CODE])
