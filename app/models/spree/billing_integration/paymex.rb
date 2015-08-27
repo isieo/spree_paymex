@@ -18,6 +18,29 @@ class Spree::BillingIntegration::Paymex < Spree::BillingIntegration
     "#{preferred_merchant_id.to_i + sum.to_i}".rjust(13,'0')
   end
 
+
+  def self.decrypt_aes_ecb(key,data)
+    require 'openssl'
+    require 'digest/sha1'
+    password = Digest::SHA1.hexdigest key
+    de_cipher = OpenSSL::Cipher::Cipher.new("AES-256-ECB")
+    de_cipher.decrypt;
+    de_cipher.key = password
+
+    de_cipher.update([data].pack('H*')) << de_cipher.final
+  end
+
+  def self.encrypt_aes_ecb(key,data)
+    require 'openssl'
+    require 'digest/sha1'
+    password = Digest::SHA1.hexdigest key
+    cipher = OpenSSL::Cipher::Cipher.new("AES-256-ECB")
+    cipher.encrypt
+    cipher.key = password
+
+    cipher.update([data].pack('H*')) << cipher.final
+  end
+
   def self.decrypt_pbe_with_md5_and_des(password, salt, data)
      require 'digest/md5'
      require 'openssl'
