@@ -23,7 +23,7 @@ class Spree::BillingIntegration::Paymex < Spree::BillingIntegration
     require 'openssl'
     require 'digest/sha1'
     password = Digest::SHA1.hexdigest key
-    de_cipher = OpenSSL::Cipher::Cipher.new("AES-256-ECB")
+    de_cipher = OpenSSL::Cipher::Cipher.new("AES-128-ECB")
     de_cipher.decrypt;
     de_cipher.key = password
 
@@ -34,11 +34,10 @@ class Spree::BillingIntegration::Paymex < Spree::BillingIntegration
     require 'openssl'
     require 'digest/sha1'
     password = Digest::SHA1.hexdigest key
-    cipher = OpenSSL::Cipher::Cipher.new("AES-256-ECB")
+    cipher = OpenSSL::Cipher::Cipher.new("AES-128-ECB")
     cipher.encrypt
     cipher.key = password
-
-    cipher.update([data].pack('H*')) << cipher.final
+    (cipher.update(data) + cipher.final).unpack("H*")[0]
   end
 
   def self.decrypt_pbe_with_md5_and_des(password, salt, data)
