@@ -28,7 +28,7 @@ Spree::CheckoutController.class_eval do
               data_string += params[:paymex][k] if params[:paymex][k] && !params[:paymex][k].blank?
               data_string += "\n"
           end
-          px_sig = (Base64.encode64(salt) + Base64.encode64(Spree::BillingIntegration::Paymex.ecrypt_pbe_with_md5_and_des(password, salt, data_string))).gsub("\n", "")
+          px_sig = (Base64.encode64(Spree::BillingIntegration::Paymex.encrypt_aes_ecb(password, data_string))).gsub("\n", "")
           @paymex_params = params[:paymex]
           @paymex_params[:PX_SIG] = px_sig
           render 'spree/paymex/proxy'
