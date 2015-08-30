@@ -8,11 +8,12 @@ Spree::CheckoutController.class_eval do
     if  params[:order][:payments_attributes] &&
         params[:order][:payments_attributes].first[:payment_method_id] &&
         Spree::PaymentMethod.find(params[:order][:payments_attributes].first[:payment_method_id]).type == 'Spree::BillingIntegration::Paymex'
-          @order = Spree::Order.find_by_number(params[:paymex][:PX_PURCHASE_ID])
+
+          order_id = params[:paymex][:PX_PURCHASE_ID].split('-').first
+          @order = Spree::Order.find_by_number(order_id)
           @gateway = Spree::PaymentMethod.find(params[:paymex][:PX_CUSTOM_FIELD1])
           salt = ('a'..'z').to_a.shuffle[0..7].join
-          password = @gateway.merchant_id_with_checksum(@order.number) + @gateway.preferred_px_ref
-
+          password = @gateway.merchant_id_with_checksum(params[:paymex][:PX_PURCHASE_ID]) + @gateway.preferred_px_ref
           params[:paymex][:PX_REF] = @gateway.preferred_px_ref
 
           data_string = ""

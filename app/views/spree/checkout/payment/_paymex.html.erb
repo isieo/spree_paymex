@@ -36,13 +36,13 @@
           <%end%>
         </span>
       </div>
-
-      <%= hidden_field_tag 'paymex[PX_MERCHANT_ID]', payment_method.merchant_id_with_checksum(@order.number) %>
+      <% rand_str = (0...5).map { ('a'..'z').to_a[rand(26)] }.join %>
+      <%= hidden_field_tag 'paymex[PX_MERCHANT_ID]', payment_method.merchant_id_with_checksum(@order.number + '-' + rand_str ) %>
       <%= hidden_field_tag 'paymex[PX_VERSION]', '1.1' %>
       <%= hidden_field_tag 'paymex[PX_TRANSACTION_TYPE]', "SALS" %>
       <%= hidden_field_tag 'paymex[PX_CUSTOM_FIELD1]', payment_method.id %>
       <%= hidden_field_tag 'paymex[PX_PURCHASE_DESCRIPTION]', "Payment for Order #{@order.number}" %>
-      <%= hidden_field_tag 'paymex[PX_PURCHASE_ID]', @order.number %>
+      <%= hidden_field_tag 'paymex[PX_PURCHASE_ID]', @order.number + '-' + rand_str  %>
       <%= hidden_field_tag 'paymex[PX_PURCHASE_DATE]', Time.now.strftime("%d%m%Y %H:%M:%S") %>
       <%= hidden_field_tag 'paymex[PX_PURCHASE_AMOUNT]', (@order.total * 100).to_i%>
   </div>

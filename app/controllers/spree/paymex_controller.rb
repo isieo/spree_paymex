@@ -2,14 +2,17 @@ module Spree
   class PaymexController < ::ActionController::Base
     layout 'paymex_proxy'
     def response_handler
+
       if params[:PX_PURCHASE_ID].nil?
+        order_id = params[:PX_PURCHASE_ID].split('-').first
         error_message = "Invalid purchase, please contact customer support."
         flash[:error] = error_message
         @order = Spree::Order.find(session[:order_id])
         redirect_to checkout_state_path(@order.state)
         return
       end
-      @order = Spree::Order.find_by_number(params[:PX_PURCHASE_ID])
+      order_id = params[:PX_PURCHASE_ID].split('-').first
+      @order = Spree::Order.find_by_number(order_id)
 
       if params[:PX_ERROR_CODE].empty? || params[:PX_ERROR_CODE] == '000'
         salt = Base64.decode64 params[:PX_SIG][0..11]
@@ -17,7 +20,7 @@ module Spree
         @gateway = Spree::PaymentMethod.find(params[:PX_CUSTOM_FIELD1])
         px_ref = @gateway.preferred_px_ref
         password = @gateway.preferred_merchant_id.rjust(13,'0') + px_ref
-        decrypted = Spree::BillingIntegration::Paymex.decrypt_aes_ecb(password, salt, data).split("\n")
+        decrypted = Spree::BillingIntegration::Paymex.decrypt_aes_ecb(password, data).split("\n")
         valid = true
         i = 0
         [:PX_VERSION, :PX_TRANSACTION_TYPE,
