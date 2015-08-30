@@ -16,8 +16,8 @@ module Spree
         data = Base64.decode64 params[:PX_SIG][12..-1]
         @gateway = Spree::PaymentMethod.find(params[:PX_CUSTOM_FIELD1])
         px_ref = @gateway.preferred_px_ref
-        password = @gateway.preferred_merchant_id + px_ref
-        decrypted = Spree::BillingIntegration::Paymex.decrypt_aes_ecb(password, data).split("\n")
+        password = @gateway.preferred_merchant_id.rjust(13,'0') + px_ref
+        decrypted = Spree::BillingIntegration::Paymex.decrypt_aes_ecb(password, salt, data).split("\n")
         valid = true
         i = 0
         [:PX_VERSION, :PX_TRANSACTION_TYPE,
