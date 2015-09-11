@@ -15,8 +15,7 @@ module Spree
       @order = Spree::Order.find_by_number(order_id)
 
       if params[:PX_ERROR_CODE].empty? || params[:PX_ERROR_CODE] == '000'
-        salt = Base64.decode64 params[:PX_SIG][0..11]
-        data = Base64.decode64 params[:PX_SIG][12..-1]
+        data = Base64.decode64 params[:PX_SIG]
         @gateway = Spree::PaymentMethod.find(params[:PX_CUSTOM_FIELD1])
         px_ref = @gateway.preferred_px_ref
         password = @gateway.preferred_merchant_id.rjust(13,'0') + px_ref
