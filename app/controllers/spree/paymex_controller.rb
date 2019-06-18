@@ -4,7 +4,6 @@ module Spree
     def response_handler
 
       if params[:PX_PURCHASE_ID].nil?
-        order_id = params[:PX_PURCHASE_ID].split('-').first
         error_message = "Invalid purchase, please contact customer support."
         flash[:error] = error_message
         @order = Spree::Order.find(session[:order_id])
